@@ -12,3 +12,4 @@ function isChicken(str) {
 isChicken("나는 치킨을 좋아합니다.");
 isChicken("저는 피자를 좋아합니다.");
 isChicken("저는 치킨과 피자를 좋아합니다.");
+
