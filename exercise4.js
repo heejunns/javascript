@@ -9,3 +9,4 @@ let result2 = arr.splice(3,3);
 console.log(arr);
 console.log(result);
 console.log(result2)
+
