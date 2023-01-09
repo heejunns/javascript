@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>끝말잇기</title>
+  </head>
+  <body>
+    <div><span id="order">1</span>번째 참가자</div>
+    <div id="gameEnd">제시어: <span id="word"></span></div>
+    <input type="text" />
+    <button>입력</button>
+    <script>
+      const number = parseInt(prompt('몇 명이 참가하나요?'), 10);
+      const $button = document.querySelector('button');
+      const $input = document.querySelector('input');
+      const $word = document.querySelector('#word');
+      const $order = document.querySelector('#order');
+      const $gameEnd = document.querySelector('#gameEnd');
+      let word; // 제시어
+      let inputWord; // 입력되는 단어
+
+      const onClickButton = () => {
+        if (!word) {
+          // 제시어가 비어있다.
+          console.log('제시어가 비어 있습니다.');
+          word = inputWord; // 제시어에 입력된 단어 저장
+          $word.textContent = word; // 제시어를 보여주기
+          const orderNum = Number($order.textContent, 10); // order 아이디의 span 태그의 컨텐츠 값을 문자열에서 정수로 변환
+          if (orderNum + 1 > number) {
+            // 다음 순서의 사람의 순서가 참가한 사람의 수보다 크다면
+            $order.textContent = 1; // 첫번째 사람에게 순서를 넘겨주기
+          } else {
+            $order.textContent = orderNum + 1; // 아니라면 다음 순서의 사람에게 넘겨주기
+          }
+          $input.value = ''; // 입력창에 입력했던 내용 지우기
+          $input.focus(); // 비운 입력창에 커서두기
+        } else {
+          // 제시어가 있다.
+          if (word[word.length - 1] === inputWord[0]) {
+            // 제시어의 마지막 문자와 입력되는 단어의 첫번째 문자가 같은지 판단
+            word = inputWord;
+            $word.textContent = word;
+            const orderNum = Number($order.textContent);
+            if (orderNum + 1 > number) {
+              $order.textContent = 1;
+            } else {
+              $order.textContent = orderNum + 1;
+            }
+            $input.value = ''; // 입력창에 입력했던 내용 지우기
+            $input.focus(); // 비운 입력창에 커서두기
+          } else {
+            alert(
+              ' 땡 !!! 틀렸습니다!!! 게임을 다시 시작하고 싶으시면 새로고침 해주세요!'
+            );
+            $input.value = ''; // 입력창에 입력했던 내용 지우기
+            $input.focus(); // 비운 입력창에 커서두기
+          }
+        }
+      };
+      const onInput = (event) => {
+        inputWord = event.target.value;
+      };
+
+      $button.addEventListener('click', onClickButton);
+      $input.addEventListener('input', onInput);
+    </script>
+  </body>
+</html>
