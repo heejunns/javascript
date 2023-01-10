@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      fieldset {
+        width: 600px;
+        height: 600px;
+      }
+      #input {
+        display: inline;
+      }
+      button {
+        width: 100px;
+        height: 100px;
+        margin: 10px 10px;
+        font-size: 50px;
+      }
+      #display {
+        width: 100px;
+        height: 100px;
+      }
+      #total {
+        font-size: 80px;
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+      }
+    </style>
+    <title>계산기 (css 포함)</title>
+  </head>
+  <body>
+    <fieldset>
+      <legend>계산기</legend>
+      <div>
+        <div id="display">실행 결과 : <br /><span id="total"></span></div>
+      </div>
+      <div>
+        <button id="one">1</button>
+        <button id="two">2</button>
+        <button id="three">3</button>
+        <button id="four">4</button>
+      </div>
+      <div>
+        <button id="five">5</button>
+        <button id="six">6</button>
+        <button id="seven">7</button>
+        <button id="eight">8</button>
+      </div>
+      <div>
+        <button id="nine">9</button>
+        <button id="zero">0</button>
+        <button id="add">+</button>
+        <button id="sub">-</button>
+      </div>
+      <div>
+        <button id="mul">*</button>
+        <button id="div">/</button>
+        <button id="result">=</button>
+        <button id="clear">c</button>
+      </div>
+    </fieldset>
+
+    <script>
+      const $total = document.querySelector('#total');
+      const $one = document.querySelector('#one');
+      const $two = document.querySelector('#two');
+      const $three = document.querySelector('#three');
+      const $four = document.querySelector('#four');
+      const $five = document.querySelector('#five');
+      const $six = document.querySelector('#six');
+      const $seven = document.querySelector('#seven');
+      const $eight = document.querySelector('#eight');
+      const $nine = document.querySelector('#nine');
+      const $zero = document.querySelector('#zero');
+      const $add = document.querySelector('#add');
+      const $sub = document.querySelector('#sub');
+      const $mul = document.querySelector('#mul');
+      const $div = document.querySelector('#div');
+      const $result = document.querySelector('#result');
+      const $clear = document.querySelector('#clear');
+      let number1;
+      let number2;
+      let operator;
+
+      const onClickNum = (number) => {
+        return () => {
+          if (operator) {
+            number2 = Number(number);
+            $total.textContent += number2;
+          } else {
+            number1 = Number(number);
+            $total.textContent += number1;
+          }
+        };
+      };
+      const onClickOperator = (wordNew) => {
+        return () => {
+          if (
+            number1 &&
+            (wordNew === '+' ||
+              wordNew === '-' ||
+              wordNew === '*' ||
+              wordNew === '/')
+          ) {
+            operator = wordNew;
+            $total.textContent += operator;
+          }
+        };
+      };
+      const onClickResult = () => {
+        let answer;
+        if (operator === '+') {
+          // operator에 저장되어 있는 연산자를 판단해 연산하기
+          answer = number1 + number2;
+        } else if (operator === '-') {
+          answer = number1 - number2;
+        } else if (operator === '*') {
+          answer = number1 * number2;
+        } else if (operator === '/') {
+          answer = number1 / number2;
+        }
+        $total.textContent = answer;
+      };
+      const onClickClear = () => {
+        number1 = '';
+        number2 = '';
+        operator = '';
+        $total.textContent = '';
+      };
+      $one.addEventListener('click', onClickNum('1'));
+      $two.addEventListener('click', onClickNum('2'));
+      $three.addEventListener('click', onClickNum('3'));
+      $four.addEventListener('click', onClickNum('4'));
+      $five.addEventListener('click', onClickNum('5'));
+      $six.addEventListener('click', onClickNum('6'));
+      $seven.addEventListener('click', onClickNum('7'));
+      $eight.addEventListener('click', onClickNum('8'));
+      $nine.addEventListener('click', onClickNum('9'));
+      $zero.addEventListener('click', onClickNum('0'));
+      $add.addEventListener('click', onClickOperator('+'));
+      $sub.addEventListener('click', onClickOperator('-'));
+      $mul.addEventListener('click', onClickOperator('*'));
+      $div.addEventListener('click', onClickOperator('/'));
+      $result.addEventListener('click', onClickResult);
+      $clear.addEventListener('click', onClickClear);
+    </script>
+  </body>
+</html>
