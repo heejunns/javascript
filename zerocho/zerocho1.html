@@ -17,7 +17,6 @@
       const $input = document.querySelector('input');
       const $word = document.querySelector('#word');
       const $order = document.querySelector('#order');
-      const $gameEnd = document.querySelector('#gameEnd');
       let word; // 제시어
       let inputWord; // 입력되는 단어
 
@@ -26,7 +25,7 @@
           // 제시어가 비어있거나 제시어가 있고 단어가 입력되었다.
           word = inputWord; // 제시어에 입력된 단어 저장
           $word.textContent = word; // 제시어를 보여주기
-          const orderNum = Number($order.textContent, 10); // order 아이디의 span 태그의 컨텐츠 값을 문자열에서 정수로 변환
+          const orderNum = Number($order.textContent); // order 아이디의 span 태그의 컨텐츠 값을 문자열에서 정수로 변환
           if (orderNum + 1 > number) {
             // 다음 순서의 사람의 순서가 참가한 사람의 수보다 크다면
             $order.textContent = 1; // 첫번째 사람에게 순서를 넘겨주기
