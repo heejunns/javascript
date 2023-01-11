@@ -42,28 +42,28 @@
         <div id="display">실행 결과 : <br /><span id="total"></span></div>
       </div>
       <div>
-        <button id="one">1</button>
-        <button id="two">2</button>
-        <button id="three">3</button>
-        <button id="four">4</button>
-      </div>
-      <div>
-        <button id="five">5</button>
-        <button id="six">6</button>
         <button id="seven">7</button>
         <button id="eight">8</button>
+        <button id="nine">9</button>
+        <button id="add">+</button>
       </div>
       <div>
-        <button id="nine">9</button>
-        <button id="zero">0</button>
-        <button id="add">+</button>
+        <button id="four">4</button>
+        <button id="five">5</button>
+        <button id="six">6</button>
         <button id="sub">-</button>
       </div>
       <div>
+        <button id="one">1</button>
+        <button id="two">2</button>
+        <button id="three">3</button>
         <button id="mul">*</button>
-        <button id="div">/</button>
-        <button id="result">=</button>
+      </div>
+      <div>
+        <button id="zero">0</button>
         <button id="clear">c</button>
+        <button id="result">=</button>
+        <button id="div">/</button>
       </div>
     </fieldset>
 
@@ -89,44 +89,71 @@
       let number2;
       let operator;
 
-      const onClickNum = (number) => {
-        return () => {
-          if (operator) {
-            number2 = Number(number);
-            $total.textContent += number2;
+      const onClickNum = (event) => {
+        if (operator) {
+          number2 = Number(event.target.textContent);
+          $total.textContent += number2;
+        } else {
+          number1 = Number(event.target.textContent);
+          $total.textContent += number1;
+        }
+      };
+
+      const onClickOperator = (wordNew) => () => {
+        if (
+          number1 &&
+          (wordNew === '+' ||
+            wordNew === '-' ||
+            wordNew === '*' ||
+            wordNew === '/') &&
+          !operator
+        ) {
+          operator = wordNew;
+          $total.textContent += operator;
+        } else {
+          if (!number1) {
+            alert('number1에 숫자를 입력하지 않았습니다. 다시 입력해 주세요.');
+          } else if (operator) {
+            alert('이미 연산자를 입력하셨습니다.number2를 입력해주세요.');
           } else {
-            number1 = Number(number);
-            $total.textContent += number1;
+            alert('연산자가 아닙니다. 다시 입력해 주세요.');
           }
-        };
+        }
       };
-      const onClickOperator = (wordNew) => {
-        return () => {
-          if (
-            number1 &&
-            (wordNew === '+' ||
-              wordNew === '-' ||
-              wordNew === '*' ||
-              wordNew === '/')
-          ) {
-            operator = wordNew;
-            $total.textContent += operator;
-          }
-        };
-      };
+
       const onClickResult = () => {
         let answer;
-        if (operator === '+') {
-          // operator에 저장되어 있는 연산자를 판단해 연산하기
-          answer = number1 + number2;
-        } else if (operator === '-') {
-          answer = number1 - number2;
-        } else if (operator === '*') {
-          answer = number1 * number2;
-        } else if (operator === '/') {
-          answer = number1 / number2;
+        if (number2) {
+          // if (operator === '+') {
+          //   // operator에 저장되어 있는 연산자를 판단해 연산하기
+          //   answer = number1 + number2;
+          // } else if (operator === '-') {
+          //   answer = number1 - number2;
+          // } else if (operator === '*') {
+          //   answer = number1 * number2;
+          // } else if (operator === '/') {
+          //   answer = number1 / number2;
+          // }
+          switch (
+            operator // 위에 if, else if 문을 switch문으로 대체
+          ) {
+            case '+':
+              answer = number1 + number2;
+              break;
+            case '-':
+              answer = number1 + number2;
+              break;
+            case '*':
+              answer = number1 * number2;
+              break;
+            case '/':
+              answer = number1 / number2;
+              break;
+          }
+          $total.textContent = answer;
+        } else {
+          alert('number2가 입력되지 않았습니다. number2를 입력해주세요');
         }
-        $total.textContent = answer;
       };
       const onClickClear = () => {
         number1 = '';
@@ -134,16 +161,16 @@
         operator = '';
         $total.textContent = '';
       };
-      $one.addEventListener('click', onClickNum('1'));
-      $two.addEventListener('click', onClickNum('2'));
-      $three.addEventListener('click', onClickNum('3'));
-      $four.addEventListener('click', onClickNum('4'));
-      $five.addEventListener('click', onClickNum('5'));
-      $six.addEventListener('click', onClickNum('6'));
-      $seven.addEventListener('click', onClickNum('7'));
-      $eight.addEventListener('click', onClickNum('8'));
-      $nine.addEventListener('click', onClickNum('9'));
-      $zero.addEventListener('click', onClickNum('0'));
+      $one.addEventListener('click', onClickNum);
+      $two.addEventListener('click', onClickNum);
+      $three.addEventListener('click', onClickNum);
+      $four.addEventListener('click', onClickNum);
+      $five.addEventListener('click', onClickNum);
+      $six.addEventListener('click', onClickNum);
+      $seven.addEventListener('click', onClickNum);
+      $eight.addEventListener('click', onClickNum);
+      $nine.addEventListener('click', onClickNum);
+      $zero.addEventListener('click', onClickNum);
       $add.addEventListener('click', onClickOperator('+'));
       $sub.addEventListener('click', onClickOperator('-'));
       $mul.addEventListener('click', onClickOperator('*'));
