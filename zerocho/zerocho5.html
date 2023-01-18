@@ -26,19 +26,20 @@
       const $counter = document.querySelector('#counter'); // id = counter 태그 선택
       let inputWord; // 입력되는 숫자
       let strike = 0; // 숫자의 위치와 숫자의 값이 모두 일치하는 개수
-      let same = 0; // 위치와 상관없이 숫자의 값이 같은 개수
+      let ball = 0; // 위치는 다르지만 4자리 숫자에 포함되는 숫자의 개수
       let numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // 1부터 9까지 무작위로 숫자를 뽑을 배열
       let answer; // 정답을 저장할 변수
       let count; // 도전 횟수 제한 개수
       let tries = []; // 입력한 숫자를 저장할 배열
+      let threeOut = 0;
       const onClickStart = () => {
         // 처음 게임시작 버튼 또는 게임을 진행하다가 새로운 게임을 시작할려고 할때 버튼
         // 변수들 초기화
         strike = 0;
-        same = 0;
+        ball = 0;
         answer = '';
-        numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        count = 3;
+        numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        count = 10;
         tries = [];
         // 태그 내용들 초기화
         $screen.textContent = '';
@@ -58,71 +59,74 @@
         array.sort(() => Math.random() - 0.5);
       }
       const checkInput = (inputword) => {
-        // 입력된 숫자의 길이가 4이고 count의 개수가 0이 아니고 입력된 숫자의 중복되는 숫자가 있는지 확인후 사이즈가 4인지 확인 입력된 숫자가 tries에 포함되어있지 않은지 확인
-        if (inputWord.length !== 4) {
+        // 입력된 숫자의 길이가 4이고 , 입력된 숫자의 중복되는 숫자가 있는지 확인후 사이즈가 4인지 확인 , 입력된 숫자가 tries에 포함되어있지 않은지 확인
+        if (inputword.length !== 4) {
           alert('제출 형식이 맞지 않습니다. 숫자4개를 입력해주세요.');
           return false;
-        } else if (new Set(inputWord).size !== 4) {
+        } else if (new Set(inputword).size !== 4) {
           alert('숫자가 중복되지 않게 입력해주세요.');
           return false;
-        } else if (tries.includes(inputWord)) {
+        } else if (tries.includes(inputword)) {
           alert('이미 입력한 숫자 입니다.');
           return false;
         } else {
           return true;
         }
       };
-      const countStrike = () => {
-        for (let i = 0; i <= 3; ++i) {
-          // 정답 숫자와 입력한 숫자의 같은 위치에 같은 숫자 값이 몇개 있는지 확인
-          if (answer[i] === inputWord[i]) {
-            strike += 1;
+
+      const countStrikeAndBall = (inputword) => {
+        for (let i = 0; i < answer.length; ++i) {
+          let index = inputword.indexOf(answer[i]); // 입력한 문자열에서 정답 문자열의 i번째 단어의 index를 찾기
+          if (index > -1) {
+            // -1 보다 크다면 입력한 문자열에 존재한다는 뜻 이니까
+            if (index === i) {
+              // 입력한 단어와 정답 단어의 index 위치의 문자가 같다면 +1
+              strike += 1;
+            } else {
+              ball += 1;
+            }
           }
         }
-        return strike;
-      };
-      const countSame = () => {
-        for (let i = 0; i <= 3; ++i) {
-          // 위치와 상관없이 같은 값의 숫자가 몇개 있는지 확인
-          for (let l = 0; l <= 3; ++l) {
-            if (answer[i] === inputWord[l]) same += 1;
-          }
-        }
-        return same;
       };
 
       const onClickButton = () => {
         console.log(answer);
         if (!checkInput(inputWord)) {
-          return;
+          return; // 반환값이 false라면 빠르게 종료
         }
-        countStrike(inputWord);
-        countSame(inputWord);
-        count -= 1; // 제출 버튼을 클릭 할때마다 -1
+        // 반환값이 true 라면 입력값에 문제가 없다는 뜻이니까 실행
+        countStrikeAndBall(inputWord); // strike 와 ball의 개수를 세기
+        count -= 1; // 입력값에 문제가 없어서 실행되면 도전 횟수 -1
         $screen.textContent = inputWord; // 화면에 입력한 숫자 보여주기
         $counter.textContent = count; // 화면에 남은 도전 횟수 보여주기
         tries.push(inputWord); // tries 배열에 입력한 숫자 저장하기
-        if (strike === 0 && same === 0) {
-          $hint.textContent = 'out';
-          $input.value = '';
-          $input.focus();
-        } else if (strike === 4) {
+        if (strike === 4) {
           $hint.textContent = `strike : ${strike} 개`;
           $input.value = '';
           $input.focus();
           alert('HomeRun!!! 정답 입니다!');
           return;
-        } else if (strike === 0 && same) {
-          $hint.textContent = `ball : ${same} 개`;
+        } else if (strike === 0 && ball === 0) {
+          $hint.textContent = 'out';
           $input.value = '';
           $input.focus();
-        } else if (strike && same) {
-          $hint.textContent = `strike : ${strike} 개, ball : ${Math.abs(
-            strike - same
-          )} 개`;
+          threeOut += 1;
+          if (threeOut === 3) {
+            alert(
+              '게임종료! 3 아웃으로 게임에서 패배 하셨습니다. 게임 시작하기를 클릭해 게임을 다시 시작 해주세요.'
+            );
+          }
+        } else if (strike && ball) {
+          $hint.textContent = `strike : ${strike} 개, ball : ${ball} 개`;
+          $input.value = '';
+          $input.focus();
+        } else if (strike === 0 && ball) {
+          $hint.textContent = `ball : ${ball} 개`;
           $input.value = '';
           $input.focus();
         }
+        strike = 0;
+        ball = 0;
         if (count === 0) {
           alert(
             '제출기회가 모두 소진되었습니다. 정답은 ' +
@@ -130,9 +134,8 @@
               ' 입니다. 게임을 다시 시작 해주세요.'
           );
         }
-        strike = 0;
-        same = 0;
       };
+
       const onInput = (event) => {
         inputWord = event.target.value;
       };
