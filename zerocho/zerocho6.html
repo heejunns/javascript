@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .ball {
+        display: inline-block;
+        border: 1px solid black;
+        border-radius: 20px;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 20px;
+        text-align: center;
+        margin-right: 20px;
+      }
+    </style>
+    <title>Document</title>
+  </head>
+  <body>
+    <fieldset>
+      <legend>로또 추첨기</legend>
+      <div id="result">추첨 결과는?</div>
+      <div id="bonus">보너스 :</div>
+    </fieldset>
+    <script>
+      const candidate = Array(45)
+        .fill()
+        .map((element, index) => {
+          // 1 ~ 45 까지 원소를 가지는 배열 만들기
+          return index + 1;
+        });
+      const shuffle = []; // candidate 를 섞은 배열
+      while (candidate.length > 0) {
+        // candidate의 원소를 섞기
+        const random = Math.floor(Math.random() * candidate.length); // 랜덤으로 인덱스 하나 생성
+        const spliceArray = candidate.splice(random, 1); // candidate에 인덱스 자리에 해당하는 값 꺼내기
+        const value = spliceArray[0]; // 그 값을 value에 저장
+        shuffle.push(value); // shuffle에 저장
+      }
+    </script>
+  </body>
+</html>
