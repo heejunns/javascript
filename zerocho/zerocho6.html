@@ -80,7 +80,9 @@
               drawBall(winBalls[i], $result);
             }, (i + 1) * 1000);
           } else {
-            setTimeout(() => {}, (i + 1) * 1000);
+            setTimeout(() => {
+              drawBall(shuffle[i], $bonus);
+            }, (i + 1) * 1000);
           }
         }
       };
