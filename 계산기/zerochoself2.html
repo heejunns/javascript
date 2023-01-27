@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      fieldset {
+        width: 600px;
+        height: 600px;
+      }
+      #input {
+        display: inline;
+      }
+      button {
+        width: 100px;
+        height: 100px;
+        margin: 10px 10px;
+        font-size: 50px;
+      }
+      #display {
+        width: 100px;
+        height: 100px;
+      }
+      #total {
+        font-size: 80px;
+        display: inline-block;
+        width: 300px;
+        height: 300px;
+      }
+    </style>
+    <title>계산기 (css 포함)</title>
+  </head>
+  <body>
+    <fieldset>
+      <legend>계산기</legend>
+      <div>
+        <div id="display">실행 결과 : <br /><span id="total"></span></div>
+      </div>
+      <div>
+        <button id="seven">7</button>
+        <button id="eight">8</button>
+        <button id="nine">9</button>
+        <button id="add">+</button>
+      </div>
+      <div>
+        <button id="four">4</button>
+        <button id="five">5</button>
+        <button id="six">6</button>
+        <button id="sub">-</button>
+      </div>
+      <div>
+        <button id="one">1</button>
+        <button id="two">2</button>
+        <button id="three">3</button>
+        <button id="mul">*</button>
+      </div>
+      <div>
+        <button id="zero">0</button>
+        <button id="clear">c</button>
+        <button id="result">=</button>
+        <button id="div">/</button>
+      </div>
+    </fieldset>
+
+    <script>
+      const $total = document.querySelector('#total');
+      const $one = document.querySelector('#one');
+      const $two = document.querySelector('#two');
+      const $three = document.querySelector('#three');
+      const $four = document.querySelector('#four');
+      const $five = document.querySelector('#five');
+      const $six = document.querySelector('#six');
+      const $seven = document.querySelector('#seven');
+      const $eight = document.querySelector('#eight');
+      const $nine = document.querySelector('#nine');
+      const $zero = document.querySelector('#zero');
+      const $add = document.querySelector('#add');
+      const $sub = document.querySelector('#sub');
+      const $mul = document.querySelector('#mul');
+      const $div = document.querySelector('#div');
+      const $result = document.querySelector('#result');
+      const $clear = document.querySelector('#clear');
+      let number1 = '';
+      let number2 = '';
+      let operator;
+      let answer;
+
+      const onClickNum = (event) => {
+        if (operator) {
+          number2 += event.target.textContent;
+          $total.textContent += event.target.textContent;
+        } else {
+          number1 += event.target.textContent;
+          $total.textContent += event.target.textContent;
+        }
+      };
+
+      const onClickOperator = (wordNew) => () => {
+        if (operator) {
+          // 이미 operator가 있다면 저장되어 있는 number1 과 number2의 사칙 연산을 진행후 새로운 operator 저장
+          if (operator === '+') {
+            // operator에 저장되어 있는 연산자를 판단해 연산하기
+            number1 = Number(number1) + Number(number2);
+          } else if (operator === '-') {
+            number1 = Number(number1) - Number(number2);
+          } else if (operator === '*') {
+            number1 = Number(number1) * Number(number2);
+          } else if (operator === '/') {
+            number1 = Number(number1) / Number(number2);
+          }
+          number2 = ''; // 사칙 연산후 새로운 값을 입력 받아야하기 때문에 numeber2 값 초기화
+        }
+        if (number1) {
+          // number1의 값이 있어야 연산자를 입력받을 수 있다.
+          operator = wordNew; // 연산자 저장
+          $total.textContent += operator; // 현재 진행중인 계산 화면에 보여주기
+        } else {
+          if (!number1) {
+            alert('number1을 숫자를 입력하지 않았습니다. 다시 입력해 주세요.');
+          } else {
+            alert('연산자가 아닙니다. 다시 입력해 주세요.');
+          }
+        }
+      };
+
+      const onClickResult = () => {
+        // number1 과 number2의 사칙연산 계산하기
+        if (operator === '+') {
+          // operator에 저장되어 있는 연산자를 판단해 연산하기
+          number1 = Number(number1) + Number(number2);
+        } else if (operator === '-') {
+          number1 = Number(number1) - Number(number2);
+        } else if (operator === '*') {
+          number1 = Number(number1) * Number(number2);
+        } else if (operator === '/') {
+          number1 = Number(number1) / Number(number2);
+        }
+        number2 = '';
+        operator = '';
+        $total.textContent = number1; // 사칙연산 결과 보여주기
+      };
+      const onClickClear = () => {
+        // 모두 초기화 함수
+        number1 = '';
+        number2 = '';
+        operator = '';
+        $total.textContent = '';
+      };
+      $one.addEventListener('click', onClickNum);
+      $two.addEventListener('click', onClickNum);
+      $three.addEventListener('click', onClickNum);
+      $four.addEventListener('click', onClickNum);
+      $five.addEventListener('click', onClickNum);
+      $six.addEventListener('click', onClickNum);
+      $seven.addEventListener('click', onClickNum);
+      $eight.addEventListener('click', onClickNum);
+      $nine.addEventListener('click', onClickNum);
+      $zero.addEventListener('click', onClickNum);
+      $add.addEventListener('click', onClickOperator('+'));
+      $sub.addEventListener('click', onClickOperator('-'));
+      $mul.addEventListener('click', onClickOperator('*'));
+      $div.addEventListener('click', onClickOperator('/'));
+      $result.addEventListener('click', onClickResult);
+      $clear.addEventListener('click', onClickClear);
+    </script>
+  </body>
+</html>
