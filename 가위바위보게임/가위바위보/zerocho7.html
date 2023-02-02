@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가위바위보 게임</title>
+    <style>
+      #computer {
+        width: 165px;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset>
+      <legend>가위바위보 게임</legend>
+      <div id="computer"></div>
+      <div>
+        <button id="start">게임 시작하기</button>
+        <button id="reset">게임 다시 시작하기</button>
+        <button id="result">게임 결과 보기</button>
+        <button id="scissors">가위</button>
+        <button id="rock">바위</button>
+        <button id="paper">보</button>
+      </div>
+      <div>게임 결과 : <span id="score"></span></div>
+    </fieldset>
+
+    <script>
+      const rsp = {
+        scissors: '0',
+        rock: '-220px',
+        paper: '-440px',
+      };
+      const $computer = document.querySelector('#computer');
+      const $start = document.querySelector('#start');
+      const $scissors = document.querySelector('#scissors');
+      const $rock = document.querySelector('#rock');
+      const $paper = document.querySelector('#paper');
+      const $reset = document.querySelector('#reset');
+      const $result = document.querySelector('#result');
+      const $score = document.querySelector('#score');
+      const IMG_URL = './rsp.png';
+
+      $computer.style.background = `url(${IMG_URL}) ${rsp.scissors} 0px`; // 이미지의 가로너비, 세로너비, 가위 : 0, 주먹 : -220, 보 : -440
+      $computer.style.backgroundSize = 'auto 200px'; // 너비를 auto , 높이를 200px 로 설정
+
+      let computerChoice = 'scissior';
+      let intervalId;
+      const gameStart = () => {
+        intervalId = setInterval(() => {
+          if (computerChoice === 'scissior') {
+            computerChoice = 'rock';
+          } else if (computerChoice === 'rock') {
+            computerChoice = 'paper';
+          } else if (computerChoice === 'paper') {
+            computerChoice = 'scissior';
+          }
+          $computer.style.background = `url(${IMG_URL}) ${rsp[computerChoice]} 0px`;
+          $computer.style.backgroundSize = 'auto 200px';
+        }, 50);
+      };
+      $start.addEventListener('click', gameStart);
+
+      let myChoice;
+      const clickButton = (choice) => {
+        return () => {
+          clearInterval(intervalId);
+          myChoice = choice;
+          console.log(myChoice);
+          console.log(computerChoice);
+        };
+      };
+      $scissors.addEventListener('click', clickButton('scissior'));
+      $rock.addEventListener('click', clickButton('rock'));
+      $paper.addEventListener('click', clickButton('paper'));
+
+      const clickGameResult = () => {
+        if (myChoice === 'scissior') {
+          if (computerChoice === 'scissior') {
+            $score.textContent = '무승부';
+          } else if (computerChoice === 'rock') {
+            $score.textContent = '패배';
+          } else if (computerChoice === 'paper') {
+            $score.textContent = '승리';
+          }
+        } else if (myChoice === 'rock') {
+          if (computerChoice === 'scissior') {
+            $score.textContent = '승리';
+          } else if (computerChoice === 'rock') {
+            $score.textContent = '무승부';
+          } else if (computerChoice === 'paper') {
+            $score.textContent = '패배';
+          }
+        } else if (myChoice === 'paper') {
+          if (computerChoice === 'scissior') {
+            $score.textContent = '패배';
+          } else if (computerChoice === 'rock') {
+            $score.textContent = '승리';
+          } else if (computerChoice === 'paper') {
+            $score.textContent = '무승부';
+          }
+        }
+      };
+      $result.addEventListener('click', clickGameResult);
+
+      const clickGameReset = () => {
+        $score.textContent = '';
+        computerChoice = 'scissior';
+        myChoice = '';
+        $computer.style.background = `url(${IMG_URL}) ${rsp[computerChoice]} 0px`;
+        $computer.style.backgroundSize = 'auto 200px';
+      };
+      $reset.addEventListener('click', clickGameReset);
+    </script>
+  </body>
+</html>
