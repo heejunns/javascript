@@ -29,6 +29,7 @@
 
     <script>
       const rsp = {
+        // 가위, 바위, 보의 이미지의 백그라운드 위치를 조정하기 위한 객체
         scissors: '0',
         rock: '-220px',
         paper: '-440px',
@@ -46,39 +47,73 @@
       $computer.style.background = `url(${IMG_URL}) ${rsp.scissors} 0px`; // 이미지의 가로너비, 세로너비, 가위 : 0, 주먹 : -220, 보 : -440
       $computer.style.backgroundSize = 'auto 200px'; // 너비를 auto , 높이를 200px 로 설정
 
-      let computerChoice = 'scissior';
-      let intervalId;
+      let computerChoice = 'scissor'; // 기본적인 컴퓨터가 선택하고 있는 값을 초기화할 변수
+      let setIntervalCount = 0; // setInterval 함수의 호출 횟수를 기록하는 변수
+      let intervalId; // setInterval 함수의 반환값을 저장할 변수
       const gameStart = () => {
-        intervalId = setInterval(() => {
-          if (computerChoice === 'scissior') {
-            computerChoice = 'rock';
-          } else if (computerChoice === 'rock') {
-            computerChoice = 'paper';
-          } else if (computerChoice === 'paper') {
-            computerChoice = 'scissior';
-          }
-          $computer.style.background = `url(${IMG_URL}) ${rsp[computerChoice]} 0px`;
-          $computer.style.backgroundSize = 'auto 200px';
-        }, 50);
+        //   if 문으로 버그 해결
+        // 게임 시작 버튼을 클릭하였을때 호출
+        if (setIntervalCount === 0) {
+          // setInterval 함수 카운트 변수가 0 이라면 setInterval 함수 호출
+          intervalId = setInterval(() => {
+            if (computerChoice === 'scissor') {
+              // 컴퓨터가 가위라면
+              computerChoice = 'rock'; // 주먹으로 변경
+            } else if (computerChoice === 'rock') {
+              // 컴퓨터가 주먹이라면
+              computerChoice = 'paper'; // 보로 변경
+            } else if (computerChoice === 'paper') {
+              // 컴퓨터가 보라면
+              computerChoice = 'scissor'; // 가위로 변경
+            }
+            $computer.style.background = `url(${IMG_URL}) ${rsp[computerChoice]} 0px`;
+            $computer.style.backgroundSize = 'auto 200px';
+            setIntervalCount += 1; // setInterval 카운트 변수 +1
+          }, 50);
+        } else {
+          alert('게임 시작 버튼은 한 게임당 한번 클릭하실수 있습니다.'); // setInterval 카운트 변수가 0 이 아니라면
+        }
       };
+      // const gameStart = () => {
+      //   $start.removeEventListener('click', gameStart); //  removeEventListener 로 버그 해결
+      //   // 게임 시작 버튼을 클릭하였을때 호출
+      //   intervalId = setInterval(() => {
+      //     if (computerChoice === 'scissor') {
+      //       // 컴퓨터가 가위라면
+      //       computerChoice = 'rock'; // 주먹으로 변경
+      //     } else if (computerChoice === 'rock') {
+      //       // 컴퓨터가 주먹이라면
+      //       computerChoice = 'paper'; // 보로 변경
+      //     } else if (computerChoice === 'paper') {
+      //       // 컴퓨터가 보라면
+      //       computerChoice = 'scissor'; // 가위로 변경
+      //     }
+      //     $computer.style.background = `url(${IMG_URL}) ${rsp[computerChoice]} 0px`;
+      //     $computer.style.backgroundSize = 'auto 200px';
+      //   }, 50);
+      // };
+
       $start.addEventListener('click', gameStart);
 
-      let myChoice;
+      let myChoice; // 사용자가 선택한 버튼이 어떤건지 저장할 변수
       const clickButton = (choice) => {
+        // 가위, 바위, 보 버튼을 클릭 하였을때 호출 되는 함수
         return () => {
-          clearInterval(intervalId);
-          myChoice = choice;
+          clearInterval(intervalId); // setInterval 함수 종료
+          myChoice = choice; // 어떤 버튼을 클릭하였는지 알아야하기 때문에 choice로 인수를 받아와 mychoice 에 저장
+          setIntervalCount = 0; // setInterval 함수 카운트 변수 0 으로 초기화
           console.log(myChoice);
           console.log(computerChoice);
         };
       };
-      $scissors.addEventListener('click', clickButton('scissior'));
+      $scissors.addEventListener('click', clickButton('scissor'));
       $rock.addEventListener('click', clickButton('rock'));
       $paper.addEventListener('click', clickButton('paper'));
 
       const clickGameResult = () => {
-        if (myChoice === 'scissior') {
-          if (computerChoice === 'scissior') {
+        // 게임 결과 보기 버튼을 클릭하였을때 호출
+        if (myChoice === 'scissor') {
+          if (computerChoice === 'scissor') {
             $score.textContent = '무승부';
           } else if (computerChoice === 'rock') {
             $score.textContent = '패배';
@@ -86,7 +121,7 @@
             $score.textContent = '승리';
           }
         } else if (myChoice === 'rock') {
-          if (computerChoice === 'scissior') {
+          if (computerChoice === 'scissor') {
             $score.textContent = '승리';
           } else if (computerChoice === 'rock') {
             $score.textContent = '무승부';
@@ -94,7 +129,7 @@
             $score.textContent = '패배';
           }
         } else if (myChoice === 'paper') {
-          if (computerChoice === 'scissior') {
+          if (computerChoice === 'scissor') {
             $score.textContent = '패배';
           } else if (computerChoice === 'rock') {
             $score.textContent = '승리';
@@ -106,11 +141,13 @@
       $result.addEventListener('click', clickGameResult);
 
       const clickGameReset = () => {
-        $score.textContent = '';
-        computerChoice = 'scissior';
-        myChoice = '';
+        // 게임 다시 시작하기 버튼을 클릭하였을때 호출
+        $score.textContent = ''; // 게임 결과를 알려주는 화면 초기화
+        computerChoice = 'scissor'; // 컴퓨터가 선택하고 있는 값을 초기화
+        myChoice = ''; // 사용자가 선택한 값 초기화
         $computer.style.background = `url(${IMG_URL}) ${rsp[computerChoice]} 0px`;
         $computer.style.backgroundSize = 'auto 200px';
+        // $start.addEventListener('click', gameStart); // addEventListener 로 다시 게임 시작 버튼 클릭시 이벤트 발생하도록 만들기
       };
       $reset.addEventListener('click', clickGameReset);
     </script>
