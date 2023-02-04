@@ -18,7 +18,7 @@
       <div id="computer"></div>
       <div>
         <button id="start">게임 시작하기</button>
-        <button id="reset">게임 다시 시작하기</button>
+        <button id="restart">게임 다시 시작하기</button>
         <button id="result">게임 결과 보기</button>
         <button id="scissors">가위</button>
         <button id="rock">바위</button>
@@ -43,11 +43,12 @@
       const $scissors = document.querySelector('#scissors');
       const $rock = document.querySelector('#rock');
       const $paper = document.querySelector('#paper');
-      const $reset = document.querySelector('#reset');
+      const $restart = document.querySelector('#restart');
       const $result = document.querySelector('#result');
       const $score = document.querySelector('#score');
       const $myScore = document.querySelector('#myScore');
       const $computerScore = document.querySelector('#computerScore');
+
       const IMG_URL = './rsp.png';
 
       $computer.style.background = `url(${IMG_URL}) ${rsp.scissors} 0px`; // 이미지의 가로너비, 세로너비, 가위 : 0, 주먹 : -220, 보 : -440
@@ -189,7 +190,7 @@
       };
       $result.addEventListener('click', clickGameResult);
 
-      const clickGameReset = () => {
+      const clickGameRestart = () => {
         // 게임 다시 시작하기 버튼을 클릭하였을때 호출
         $score.textContent = ''; // 게임 결과를 알려주는 화면 초기화
         computerChoice = 'scissor'; // 컴퓨터가 선택하고 있는 값을 초기화
@@ -198,7 +199,7 @@
         $computer.style.backgroundSize = 'auto 200px';
         // $start.addEventListener('click', gameStart); // addEventListener 로 다시 게임 시작 버튼 클릭시 이벤트 발생하도록 만들기
       };
-      $reset.addEventListener('click', clickGameReset);
+      $restart.addEventListener('click', clickGameRestart);
     </script>
   </body>
 </html>
