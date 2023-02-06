@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>반응속도 테스트(속도 순서 상위 5개 보여주기)</title>
+    <link rel="stylesheet" href="response-check-style-self.css" . />
+  </head>
+  <body>
+    <fieldset>
+      <legend>반응속도 테스트</legend>
+      <div id="screen" class="wait">화면을 클릭 해주세요!</div>
+      <div>
+        <div>1등 : <span id="rank1">없음</span></div>
+        <div>2등 : <span id="rank2">없음</span></div>
+        <div>3등 : <span id="rank3">없음</span></div>
+        <div>4등 : <span id="rank4">없음</span></div>
+        <div>5등 : <span id="rank5">없음</span></div>
+      </div>
+      <button id="restart">다시 시작하기</button>
+    </fieldset>
+    <script src="response-check-code-self.js"></script>
+  </body>
+</html>
