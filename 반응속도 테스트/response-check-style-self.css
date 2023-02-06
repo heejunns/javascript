@@ -1,0 +1,19 @@
+#screen {
+  width: 300px;
+  height: 300px;
+  margin: 10px;
+  padding: 10px;
+}
+#screen.wait {
+  background-color: red;
+}
+#screen.prepare {
+  background-color: blue;
+  color: yellow;
+}
+#screen.start {
+  background-color: greenyellow;
+}
+#restart {
+  margin: 10px;
+}
