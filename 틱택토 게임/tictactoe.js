@@ -31,9 +31,10 @@ const clcikBlock = (event) => {
     // let colIndex = event.target.cellIndex;
     // 코드로 대체할수 있습니다. parentNode 는 현재 태그의 부모 태그를 선택하는 속성이며 현재 태그는 td 니까 부모 태그는 tr 태그로 tr 태그는 rowIndex 속성을 가지고 있습니다.
     // td 태그는 cellIndex 속성을 가지고 있습니다. parentNode 의 반대 개념인 childeren 은 현재 태그의 자식 태그를 선택하는 속성 입니다.
-    let rowIndex;
-    let colIndex;
+    let rowIndex; // 행 인덱스
+    let colIndex; // 열 인덱스
     data.forEach((row, indexr) => {
+      // 2중 forEach 로 현재 발생한 이벤트가 가리키는 대상 객체와 일치하는 td 를 찾아 그 인덱스를 기록하는 코드 입니다.
       row.forEach((element, indexc) => {
         if (element == event.target) {
           rowIndex = indexr;
@@ -47,14 +48,13 @@ const clcikBlock = (event) => {
     // 2. (0,0), (1,1), (2,2) 을 같은 사용자가 클릭 하였을때, 대각선
     // 3. (0,2), (1,1), (2,0) 을 같은 사용자가 클릭 하였을때, 대각선
     // 그럼 어떻게 데이터를 배열에 넣어서 어떻게 이 조건들을 확인할 것인가?
-    // data[i][l]
     if (
       // 열이 같은 그림인지 판단
       data[rowIndex][0].textContent === turn &&
       data[rowIndex][1].textContent === turn &&
       data[rowIndex][2].textContent === turn
     ) {
-      $resultChange.textContent = `${turn} 의 승`;
+      $resultChange.textContent = `${turn} 님의 승`;
       return;
     } else if (
       // 행이 같은 그림인지 판단.
@@ -62,7 +62,7 @@ const clcikBlock = (event) => {
       data[1][colIndex].textContent === turn &&
       data[2][colIndex].textContent === turn
     ) {
-      $resultChange.textContent = `${turn} 의 승`;
+      $resultChange.textContent = `${turn} 님의 승`;
       return;
     } else if (
       // 대각선 판단
@@ -70,7 +70,7 @@ const clcikBlock = (event) => {
       data[1][1].textContent === turn &&
       data[2][2].textContent === turn
     ) {
-      $resultChange.textContent = `${turn} 의 승`;
+      $resultChange.textContent = `${turn} 님의 승`;
       return;
     } else if (
       // 대각선 판단
@@ -78,18 +78,21 @@ const clcikBlock = (event) => {
       data[1][1].textContent === turn &&
       data[2][0].textContent === turn
     ) {
-      $resultChange.textContent = `${turn} 의 승`;
+      $resultChange.textContent = `${turn} 님의 승`;
       return;
     } else {
       // 위의 조건들에 부합하지 않는다면
-      let drawCount = 0;
-      //   data.forEach((row) => {
-      //     row.forEach((element) => {
-      //       if (element.textContent) {
-      //         drawCount += 1;
-      //       }
-      //     });
-      //   });
+      let drawCount = 0; // 무승부를 판단하기 위해 모든 칸의 그림이 그려졌는지 기록하는 변수
+      data.forEach((row) => {
+        // 2중 배열로 td를 저장하였기 때문에 두번의 forEach 사용
+        row.forEach((element) => {
+          if (element.textContent) {
+            // td 컨텐츠에 그림이 그려져 있다면
+            drawCount += 1;
+          }
+        });
+      });
+
       draw: for (let i = 0; i < 3; ++i) {
         // 위의 forEach 로 모든 태그들을 돌아다니며 컨텐츠값을 확인하는것은 매우 비효율적이다. for문을 돌다가 만약 빈칸이 나온다면 더이상 체크하지 않고 2중 for 문을 탈출하도록 만든다.
         for (let j = 0; j < 3; ++j) {
