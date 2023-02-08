@@ -4,7 +4,7 @@
 
 ## 틱택토 게임 순서도
 
-<img src = "./tictactoe-plan.png">
+<img src = "./tictactoe-plan1.png">
 
 ## 틱택토 게임 구현
 
