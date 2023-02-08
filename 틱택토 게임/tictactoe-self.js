@@ -105,32 +105,28 @@ const clickBlock = (event) => {
   $table.removeEventListener('click', clickBlock);
   // 생성한 td 태그의 클릭 이벤트가 발생했을때 함수 정의
   // 칸을 클릭 하였을때  이미 글자가 있는가? 확인
-  if ($resultChange.textContent === '') {
-    if (event.target.textContent) return; // 글자가 있다면 return
+  if (event.target.textContent) return; // 글자가 있다면 return
 
-    event.target.textContent = turn; // 선택한 td 태그에 turn 그리기, 여기서 만약 td 태그를 클릭한것이 아니라 table 태그를 클릭한것이라면 event.currentTarget 사용하면 된다.
-    let gameResult = winOrDraw(event.target);
-    if (gameResult == true) {
-      return;
-    }
-    // 컴퓨터가 남은 칸중에 무작위로 선택하는 기능 추가
-    // 어떻게 비어 있는 칸들을 찾아내서 무작위로 선택할것인가?
-    if (turn == 'x') {
-      setTimeout(() => {
-        for (;;) {
-          let computerChoice = Math.floor(Math.random() * 9);
-          let dataSum = data.flat();
-          if (!dataSum[computerChoice].textContent) {
-            dataSum[computerChoice].textContent = 'x';
-            winOrDraw(dataSum[computerChoice]);
-            break;
-          }
+  event.target.textContent = turn; // 선택한 td 태그에 turn 그리기, 여기서 만약 td 태그를 클릭한것이 아니라 table 태그를 클릭한것이라면 event.currentTarget 사용하면 된다.
+  let gameResult = winOrDraw(event.target);
+  if (gameResult == true) {
+    return;
+  }
+  // 컴퓨터가 남은 칸중에 무작위로 선택하는 기능 추가
+  // 어떻게 비어 있는 칸들을 찾아내서 무작위로 선택할것인가?
+  if (turn == 'x') {
+    setTimeout(() => {
+      for (;;) {
+        let computerChoice = Math.floor(Math.random() * 9);
+        let dataSum = data.flat();
+        if (!dataSum[computerChoice].textContent) {
+          dataSum[computerChoice].textContent = 'x';
+          winOrDraw(dataSum[computerChoice]);
+          break;
         }
-        $table.addEventListener('click', clickBlock);
-      }, 2000);
-    }
-  } else {
-    alert('게임을 다시 시작 해주세요.');
+      }
+      $table.addEventListener('click', clickBlock);
+    }, 2000);
   }
 };
 for (let i = 0; i < 3; ++i) {
