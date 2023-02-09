@@ -20,6 +20,7 @@ const winOrDraw = (target) => {
   // let colIndex = event.target.cellIndex;
   // 코드로 대체할수 있습니다. parentNode 는 현재 태그의 부모 태그를 선택하는 속성이며 현재 태그는 td 니까 부모 태그는 tr 태그로 tr 태그는 rowIndex 속성을 가지고 있습니다.
   // td 태그는 cellIndex 속성을 가지고 있습니다. parentNode 의 반대 개념인 childeren 은 현재 태그의 자식 태그를 선택하는 속성 입니다.
+  $table.removeEventListener('click', clickBlock);
   let rowIndex;
   let colIndex;
   data.forEach((row, indexr) => {
@@ -98,15 +99,16 @@ const winOrDraw = (target) => {
       return true;
     }
   }
+
   turn = turn === 'o' ? 'x' : 'o';
 };
 
 const clickBlock = (event) => {
-  $table.removeEventListener('click', clickBlock);
   // 생성한 td 태그의 클릭 이벤트가 발생했을때 함수 정의
   // 칸을 클릭 하였을때  이미 글자가 있는가? 확인
+  if ($resultChange.textContent) return; // 게임 결과가 화면에 보여지고 있다면 return
   if (event.target.textContent) return; // 글자가 있다면 return
-
+  $table.removeEventListener('click', clickBlock);
   event.target.textContent = turn; // 선택한 td 태그에 turn 그리기, 여기서 만약 td 태그를 클릭한것이 아니라 table 태그를 클릭한것이라면 event.currentTarget 사용하면 된다.
   let gameResult = winOrDraw(event.target);
   if (gameResult == true) {
@@ -116,19 +118,16 @@ const clickBlock = (event) => {
   // 어떻게 비어 있는 칸들을 찾아내서 무작위로 선택할것인가?
   if (turn == 'x') {
     setTimeout(() => {
-      for (;;) {
-        let computerChoice = Math.floor(Math.random() * 9);
-        let dataSum = data.flat();
-        if (!dataSum[computerChoice].textContent) {
-          dataSum[computerChoice].textContent = 'x';
-          winOrDraw(dataSum[computerChoice]);
-          break;
-        }
-      }
+      const emptyArr = data.flat().filter((element) => !element.textContent);
+      let computerChoice =
+        emptyArr[Math.floor(Math.random() * emptyArr.length)];
+      computerChoice.textContent = 'x';
+      winOrDraw(event.target);
       $table.addEventListener('click', clickBlock);
     }, 2000);
   }
 };
+
 for (let i = 0; i < 3; ++i) {
   // 2중 for 문으로 3*3 table 만들기
   const $tr = document.createElement('tr');
