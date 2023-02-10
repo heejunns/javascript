@@ -9,6 +9,7 @@ const $heroExp = document.querySelector('#hero-exp');
 const $heroAtt = document.querySelector('#hero-att');
 const $monsterName = document.querySelector('#monster-name');
 const $monsterHp = document.querySelector('#monster-hp');
+const $monsterExp = document.querySelector('#monster-exp');
 const $monsterAtt = document.querySelector('#monster-att');
 const $message = document.querySelector('#message');
 const $menu1 = document.querySelector('#menu-1');
@@ -19,6 +20,9 @@ const hero = {
   maxHp: 100,
   hp: 100,
   exp: 0,
+  levelUpExp: function () {
+    return this.level * 15;
+  },
   att: 10,
   attack: function (monster) {
     monster.hp -= this.att;
@@ -27,6 +31,11 @@ const hero = {
   recover: function (monster) {
     this.hp += 20;
     this.hp -= monster.att;
+  },
+  levelUp: function (monster) {
+    this.exp += monster.exp - this.levelUpExp();
+    this.level += 1;
+    this.att += 5 * this.level;
   },
 };
 
@@ -49,7 +58,7 @@ $startScreen.addEventListener('submit', (event) => {
   $heroName.textContent = `캐릭터 이름: ${hero.name}, `;
   $heroLevel.textContent = `level : ${hero.level}, `;
   $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
-  $heroExp.textContent = `경험치 : ${hero.exp}, `;
+  $heroExp.textContent = `경험치 : ${hero.exp}/${hero.levelUpExp()}, `;
   $heroAtt.textContent = `공격력 : ${hero.att}`;
 });
 const clickReset = () => {
@@ -75,6 +84,26 @@ const clickRun = () => {
   monster = null;
   $monsterName.textContent = '';
   $monsterHp.textContent = '';
+  $monsterExp.textContent = '';
+  $monsterAtt.textContent = '';
+};
+const gameLose = () => {
+  $startScreen.style.display = 'block';
+  $battleMenu.style.display = 'none';
+  $heroName.textContent = '';
+  $heroLevel.textContent = '';
+  $heroHp.textContent = '';
+  $heroExp.textContent = '';
+  $heroAtt.textContent = '';
+  hero.name = '';
+  hero.hp = 100;
+  hero.level = 1;
+  hero.exp = 0;
+  hero.att = 10;
+  monster = null;
+  $monsterName.textContent = '';
+  $monsterHp.textContent = '';
+  $monsterExp.textContent = '';
   $monsterAtt.textContent = '';
 };
 // 모험 모드를 선택 했을때
@@ -86,6 +115,7 @@ const clickBattle = () => {
   );
   $monsterName.textContent = `몬스터 이름 : ${monster.name}, `;
   $monsterHp.textContent = `체력 : ${monster.hp}, `;
+  $monsterExp.textContent = `경험치 : ${monster.exp}, `;
   $monsterAtt.textContent = `공격력 : ${monster.att}`;
 };
 const clickBattleMenu = (event) => {
@@ -95,22 +125,37 @@ const clickBattleMenu = (event) => {
     hero.attack(monster);
     console.log('공격함수 호출!');
     if (hero.hp <= 0) {
-      alert('monster의 승리!');
+      hero.hp = 0;
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
       $monsterHp.textContent = `체력 : ${monster.hp}, `;
-    } else if (monster.hp < 0) {
+      alert('몬스터의 승리!');
+      gameLose();
+    } else if (monster.hp <= 0) {
       alert('hero의 승리!');
+      console.log(hero.exp + monster.exp);
+      if (hero.exp + monster.exp >= hero.levelUpExp()) {
+        hero.levelUp(monster);
+        $heroLevel.textContent = `level : ${hero.level}, `;
+        $heroAtt.textContent = `공격력 : ${hero.att}`;
+      } else if (hero.exp + monster.exp < hero.levelUpExp()) {
+        hero.exp += monster.exp;
+      }
+      hero.hp = hero.maxHp;
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
-      $monsterHp.textContent = `체력 : ${monster.hp}, `;
+      $monsterHp.textContent = `체력 : 0 `;
+      $heroExp.textContent = `경험치 : ${hero.exp}/${hero.levelUpExp()}, `;
+      monster = null;
+      clickBattle();
     } else if (hero.hp > 0 && monster.hp > 0) {
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
       $monsterHp.textContent = `체력 : ${monster.hp}, `;
     }
   } else if (event.target.textContent == '회복') {
     hero.recover(monster);
-    if (hero.hp < 0) {
+    if (hero.hp <= 0) {
       alert('monster의 승리!');
-      $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
+      $heroHp.textContent = `체력 : ${0}/${hero.maxHp}, `;
+      gameLose();
     } else if (hero.hp > 100) {
       hero.hp = hero.maxHp;
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
