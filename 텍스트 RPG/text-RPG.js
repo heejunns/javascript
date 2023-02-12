@@ -1,7 +1,6 @@
 const $startScreen = document.querySelector('#start-screen');
 const $gameMenu = document.querySelector('#game-menu');
 const $battleMenu = document.querySelector('#battle-menu');
-const $reset = document.querySelector('#reset');
 const $heroName = document.querySelector('#hero-name');
 const $heroLevel = document.querySelector('#hero-level');
 const $heroHp = document.querySelector('#hero-hp');
@@ -74,8 +73,6 @@ const clickReset = () => {
   hero.level = 1;
   hero.exp = 0;
   hero.att = 10;
-  $reset.removeEventListener('click', clickReset);
-  $gameMenu.addEventListener('click', clickGameMenu);
 };
 
 const clickRun = () => {
@@ -86,25 +83,17 @@ const clickRun = () => {
   $monsterHp.textContent = '';
   $monsterExp.textContent = '';
   $monsterAtt.textContent = '';
+  $message.textContent = '';
 };
 const gameLose = () => {
-  $startScreen.style.display = 'block';
   $battleMenu.style.display = 'none';
-  $heroName.textContent = '';
-  $heroLevel.textContent = '';
-  $heroHp.textContent = '';
-  $heroExp.textContent = '';
-  $heroAtt.textContent = '';
-  hero.name = '';
-  hero.hp = 100;
-  hero.level = 1;
-  hero.exp = 0;
-  hero.att = 10;
+  clickReset();
   monster = null;
   $monsterName.textContent = '';
   $monsterHp.textContent = '';
   $monsterExp.textContent = '';
   $monsterAtt.textContent = '';
+  $message.textContent = '';
 };
 // 모험 모드를 선택 했을때
 const clickBattle = () => {
@@ -117,28 +106,27 @@ const clickBattle = () => {
   $monsterHp.textContent = `체력 : ${monster.hp}, `;
   $monsterExp.textContent = `경험치 : ${monster.exp}, `;
   $monsterAtt.textContent = `공격력 : ${monster.att}`;
+  $message.textContent = '';
 };
 const clickBattleMenu = (event) => {
-  console.log('함수 호출 되나?');
   if (event.target.textContent == '공격') {
-    console.log('공격!');
     hero.attack(monster);
-    console.log('공격함수 호출!');
     if (hero.hp <= 0) {
       hero.hp = 0;
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
       $monsterHp.textContent = `체력 : ${monster.hp}, `;
+      $message.textContent = `${hero.att} 의 데미지를 주고, ${monster.att} 의 데미지를 받았습니다. 몬스터의 승리로 게임을 다시 시작합니다.`;
       alert('몬스터의 승리!');
       gameLose();
     } else if (monster.hp <= 0) {
-      alert('hero의 승리!');
-      console.log(hero.exp + monster.exp);
       if (hero.exp + monster.exp >= hero.levelUpExp()) {
         hero.levelUp(monster);
         $heroLevel.textContent = `level : ${hero.level}, `;
         $heroAtt.textContent = `공격력 : ${hero.att}`;
+        $message.textContent = `${hero.att} 의 데미지를 주고, ${monster.att} 의 데미지를 받았습니다. ${hero.name} 님의 승리 입니다. levelup 하셨습니다. 다음 몬스터가 등장 합니다.`;
       } else if (hero.exp + monster.exp < hero.levelUpExp()) {
         hero.exp += monster.exp;
+        $message.textContent = `${hero.att} 의 데미지를 주고, ${monster.att} 의 데미지를 받았습니다. ${hero.name} 님의 승리 입니다. 다음 몬스터가 등장 합니다.`;
       }
       hero.hp = hero.maxHp;
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
@@ -149,20 +137,34 @@ const clickBattleMenu = (event) => {
     } else if (hero.hp > 0 && monster.hp > 0) {
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
       $monsterHp.textContent = `체력 : ${monster.hp}, `;
+      $message.textContent = `${hero.att} 의 데미지를 주고, ${monster.att} 의 데미지를 받았습니다.`;
     }
   } else if (event.target.textContent == '회복') {
     hero.recover(monster);
     if (hero.hp <= 0) {
-      alert('monster의 승리!');
       $heroHp.textContent = `체력 : ${0}/${hero.maxHp}, `;
+      $message.textContent = `${20} 의 체력을 회복하고, ${
+        monster.att
+      } 의 데미지를 받았습니다. ${
+        hero.name
+      } 님의 패배로 게임을 다시 시작합니다.`;
+      alert('monster의 승리!');
       gameLose();
     } else if (hero.hp > 100) {
       hero.hp = hero.maxHp;
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
+      $message.textContent = `${20} 의 체력을 회복하고, ${
+        monster.att
+      } 의 데미지를 받았습니다.`;
     } else if (hero.hp > 0) {
       $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
+      $message.textContent = `${20} 의 체력을 회복하고, ${
+        monster.att
+      } 의 데미지를 받았습니다.`;
     }
   } else if (event.target.textContent == '도망') {
+    $message.textContent = `몬스터와의 전투에서 도망 갑니다. 일반 모드로 변경 됩니다.`;
+
     clickRun();
   }
 };
@@ -177,10 +179,7 @@ const clickGameMenu = (event) => {
     $heroHp.textContent = `체력 : ${hero.hp}/ ${hero.maxHp}, `;
   } else if (event.target.textContent == '종료') {
     //  일반 모드에서 종료 선택 => 종료 메세지를 보여주며 게임 다시 시작하기 버튼 말고는 아무것도 할 수 없게 만든다. 그리고 모두 초기화 하고 캐릭터 생성 화면으로 돌아간다.
-    // $gameMenu.removeEventListener('click');
-    $reset.addEventListener('click', clickReset);
-    $gameMenu.removeEventListener('click', clickGameMenu);
-    alert('게임을 다시 시작하기 버튼을 클릭 해주세요');
+    clickReset();
   }
 };
 $gameMenu.addEventListener('click', clickGameMenu);
