@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>텍스트 RPG 게임 (클래스로 재구성하기)</title>
+    <link rel="stylesheet" href="text-RPG.css" />
+  </head>
+  <body>
+    <form id="start-screen">
+      <input id="name-input" placeholder="영웅 이름을 입력하세요!" />
+      <button id="start">시작</button>
+    </form>
+    <div id="hero-stat">
+      <span id="hero-name"></span>
+      <span id="hero-level"></span>
+      <span id="hero-hp"></span>
+      <span id="hero-exp"></span>
+      <span id="hero-att"></span>
+    </div>
+    <div id="game-menu" style="display: none">
+      <button id="menu-1">모험</button>
+      <button id="menu-2">휴식</button>
+      <button id="menu-3">종료</button>
+    </div>
+
+    <div id="battle-menu" style="display: none">
+      <button id="battle-1">공격</button>
+      <button id="battle-2">회복</button>
+      <button id="battle-3">도망</button>
+    </div>
+    <div id="message"></div>
+    <div id="monster-stat">
+      <span id="monster-name"></span>
+      <span id="monster-hp"></span>
+      <span id="monster-exp"></span>
+      <span id="monster-att"></span>
+    </div>
+    <script src="text-RPG-Class.js"></script>
+  </body>
+</html>
