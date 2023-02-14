@@ -112,8 +112,7 @@ const clickBattleMenu = (event) => {
   if (event.target.textContent == '공격') {
     hero.attack(monster);
     if (hero.hp <= 0) {
-      hero.hp = 0;
-      $heroHp.textContent = `체력 : ${hero.hp}/${hero.maxHp}, `;
+      $heroHp.textContent = `체력 : ${0}/${hero.maxHp}, `;
       $monsterHp.textContent = `체력 : ${monster.hp}, `;
       $message.textContent = `${hero.att} 의 데미지를 주고, ${monster.att} 의 데미지를 받았습니다. 몬스터의 승리로 게임을 다시 시작합니다.`;
       alert('몬스터의 승리!');
