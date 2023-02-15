@@ -1,0 +1,45 @@
+#wrapper {
+  width: 400px;
+  height: 400px;
+}
+.card {
+  /* 카드에 관련된 css */
+  display: inline-block;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  width: 70px;
+  height: 100px;
+  perspective: 140px;
+}
+
+.card-inner {
+  /* 카드가 뒤집히는 이벤트를 만듬*/
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  /* 카드가 뒤집히는 이벤트를 만듬*/
+  transform: rotateY(180deg);
+}
+
+.card-front {
+  background: navy;
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 1px solid black;
+  backface-visibility: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
