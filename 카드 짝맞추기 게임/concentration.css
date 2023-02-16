@@ -20,6 +20,7 @@
   text-align: center;
   transition: transform 0.8s;
   transform-style: preserve-3d;
+  background-color: aqua;
 }
 
 .card.flipped .card-inner {
