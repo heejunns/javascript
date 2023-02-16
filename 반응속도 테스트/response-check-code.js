@@ -28,7 +28,7 @@ const clickScreen = () => {
     // 화면이 연두색일때 클릭한다면
     endTime = new Date(); // 클릭 시간 기록
     const record = endTime - startTime; // 반응속도
-    records.push(record); // 배열애 저장하기
+    records.push(record); // 배열에 저장하기
     const average =
       records.reduce(function (a, b) {
         // 배열의 모든 값을 더하고 배열의 길이로 나누어 평균 구하기
