@@ -12,7 +12,7 @@ const colors = ['red', 'orange', 'yellow', 'green', 'white', 'pink']; // 카드�
 let colorCopy = colors.concat(colors); // 같은 색깔의 카드가 두개씩 있어야 하니까 colors 배열을 두개 합치기
 let randomColors = []; // 섞은 카드들을 저장할 배열
 
-// 피셔, 에이츠 셔플 , 카드의 색을 무작위로 섞기
+// 피셔-에이츠 셔플 , 카드의 색을 무작위로 섞기
 function shuffle() {
   for (let i = 0; colorCopy.length > 0; ++i) {
     const randomColor = Math.floor(Math.random() * colorCopy.length);
@@ -23,7 +23,7 @@ function shuffle() {
 }
 
 function createCard(i) {
-  // 카드를 생성하는 메서드
+  // 카드를 생성하는 함수
   // div.card > div.card-inner > (div.card-front + div.card-back) 태그로 구성된다.
   const card = document.createElement('div');
   card.className = 'card'; // 클래스 card 이름을 가진 div 태그 생성
@@ -97,14 +97,14 @@ function clickRestartGame() {
 button.addEventListener('click', clickRestartGame);
 
 const checkSameCard = function () {
-  //
-  // 선택한 두개의 카드가 같은지 판단하는 함수
+  // 선택한 두개의 카드의 색이 같은지 판단하는 함수
   if (
     choiceCard[0].querySelector('.card-back').style.backgroundColor ===
     choiceCard[1].querySelector('.card-back').style.backgroundColor
   ) {
-    completeCard = completeCard.concat(choiceCard);
-    choiceCard.splice(0);
+    // 클릭한 두 카드의 색이 같다면
+    completeCard = completeCard.concat(choiceCard); // 기존의 completeCard 배열과 합치기
+    choiceCard.splice(0); // choiceCard 배열 비우기
     if (completeCard.length === 12) {
       // 길이가 12 개라면 전부 카드를 뒤집었으니까 다시 카드를 클릭 못하도록 이벤트를 제거한다.
       //   document.querySelectorAll('.card').forEach((element) => {
@@ -114,26 +114,31 @@ const checkSameCard = function () {
       return;
     }
   } else {
-    choiceCard[0].classList.remove('flipped');
+    // 클릭한 두 카드의 색이 다르다면
+    choiceCard[0].classList.remove('flipped'); // 두 카드의 클래스 리스트 flipped 제거
     choiceCard[1].classList.remove('flipped');
-    choiceCard[0].addEventListener('click', clickCard);
+    choiceCard[0].addEventListener('click', clickCard); // 두 카드의 이벤트 리스너 달기
     choiceCard[1].addEventListener('click', clickCard);
-    choiceCard.splice(0);
+    choiceCard.splice(0); // choiceCard 배열 비우기
   }
 };
 
 const clickCard = function () {
-  console.log('클릭!!');
+  // 카드를 클릭하면 호출되는 콜백함수
   if (choiceCard.length < 2) {
-    this.removeEventListener('click', clickCard);
-    choiceCard.push(this);
-    this.classList.toggle('flipped');
+    // choiceCard 배열의 길이가 2보다 작다면
+    this.removeEventListener('click', clickCard); // 클릭한 카드를 클릭 못하게 하도록 이벤트 리스너 제거
+    choiceCard.push(this); // choiceCard 배열에 클릭한 카드 추가
+    this.classList.toggle('flipped'); // 클릭한 카드 클래스 리스트에 flipped 추가
+    // this.classList.add('flipped');
   } else if (choiceCard.length == 2) {
+    // 카드를 3개 이상 연속해서 클릭 했을때 이벤트가 발생해도 함수를 종료.
     return;
   }
   if (choiceCard.length == 2) {
-    // checkSameCard();
-    setTimeout(checkSameCard, 1000); // 이렇게 해야 2개의 카드가 모두 뒤집힌 후에야 카드 색을 판단한 결과를 확인할 수 있음. 사용하지 않으면 두번째 카드는 뒤집히는거 보지도 못하고 카드색의 판단 결과에 따라서 프로그램 실행된다.
+    // 클릭한 카드가 2개라면
+    setTimeout(checkSameCard, 1000); // checkSameCard 함수 호출, 이렇게 해야 2개의 카드가 모두 뒤집힌 후에야 카드 색을 판단한 결과를 확인할 수 있음.
+    //setTime 메서들르 사용하지 않으면 두번째 카드는 뒤집히는거 보지도 못하고 카드색의 판단 결과에 따라서 프로그램 실행된다.
   }
 };
 
@@ -145,7 +150,8 @@ function startGame() {
     // card.addEventListener('click', clickCard);
     $wrapper.appendChild(card); // id 값이 wrapper 인 div 태그에 자식태그로 추가
   }
-  $wrapper.append(button);
+
+  $wrapper.appendChild(button);
 
   // 게임 처음에 3초동안 모든 카드를 보여주기
   document.querySelectorAll('.card').forEach((element, index) => {
@@ -159,13 +165,13 @@ function startGame() {
     document.querySelectorAll('.card').forEach((element) => {
       element.classList.remove('flipped');
     });
-  }, 5000);
+  }, 3000);
   setTimeout(() => {
     // 모든 카드들에 이벤트 달기
     document.querySelectorAll('.card').forEach((element) => {
       element.addEventListener('click', clickCard);
     });
-  }, 5000);
+  }, 3500);
 }
 
 startGame();
