@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>지뢰찾기 게임</title>
+    <link rel="stylesheet" href="mine-sweeper.css" />
+  </head>
+  <body>
+    <fieldset>
+      <legend>지뢰찾기 게임</legend>
+      <form id="submit">
+        <input id="row" placeholder="행을 입력 해주세요." />
+        <input id="col" placeholder="열을 입력 해주세요." />
+        <input id="mine" placeholder="지뢰의 개수를 입력 해주세요." />
+        <button>입력하기</button>
+      </form>
+      <div id="timer">0초</div>
+      <table id="table">
+        <tbody></tbody>
+      </table>
+      <div class="result"></div>
+    </fieldset>
+
+    <script src="mine-sweeper.js"></script>
+  </body>
+</html>
