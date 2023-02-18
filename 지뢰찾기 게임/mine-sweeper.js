@@ -1,9 +1,16 @@
 const $tbody = document.querySelector('#table tbody');
+const $timer = document.querySelector('#timer');
+const $submit = document.querySelector('#submit');
 const $result = document.querySelector('#result');
-const row = 10; // 줄
-const cell = 10; // 칸
-const mine = 10; // 지뢰 개수
-
+let row; // 줄
+let cell; // 칸
+let mine; // 지뢰 개수
+let openCount;
+let startTime = new Date();
+const interval = setInterval(() => {
+  const time = Math.floor((new Date() - startTime) / 1000);
+  $timer.textContent = `${time} 초`;
+}, 1000);
 const CODE = {
   NORMAL: -1, // 닫힌 칸 (지뢰 없음)
   QUESTION: -2, // 물음표 칸 (지뢰 없음)
@@ -46,85 +53,24 @@ function plantMine() {
   }
 }
 function countMine(rowIndex, colIndex) {
+  const mineGroup = [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE]; // 지뢰가 있는 칸에 물음표나 깃발이 있어도 개수는 세어야 하니까 각 칸의 data 캆이 mineGroup 안에 있다면 지뢰 개수 +1
   let count = 0;
   // 지뢰의 개수를 세는 것은 클릭한 칸의 앞뒤, 위아래, 대각선에 있는 지뢰의 개수를 세는 것이다.
   // 어떻게 셀 것인가? 그리고 칸에서 잘리는 쪽은 어떻게 짤린것을 구분할 것인가?
   // data 변수로 MINE 인지 확인해야함 경우의 수는 (rowIndex, colIndex-1),  (rowIndex, colIndex+1),  (rowIndex-1, colIndex),  (rowIndex+1, colIndex),
   // (rowIndex-1, colIndex-1),(rowIndex+1, colIndex+1),  (rowIndex-1, colIndex+1),  (rowIndex+1, colIndex-1) 총 8가지 경우다.
-  //   if (
-  //     data[rowIndex][colIndex - 1] !== undefined &&
-  //     data[rowIndex][colIndex - 1] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   if (
-  //     data[rowIndex]?.[colIndex + 1] !== undefined &&
-  //     data[rowIndex][colIndex + 1] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   console.log(data[rowIndex - 1][colIndex]);
-  //   if (
-  //     data[rowIndex - 1]?.[colIndex] !== undefined &&
-  //     data[rowIndex - 1][colIndex] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   if (
-  //     data[rowIndex + 1]?.[colIndex] !== undefined &&
-  //     data[rowIndex + 1][colIndex] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   if (
-  //     data[rowIndex - 1]?.[colIndex - 1] !== undefined &&
-  //     data[rowIndex - 1][colIndex - 1] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   if (
-  //     data[rowIndex + 1]?.[colIndex + 1] !== undefined &&
-  //     data[rowIndex + 1][colIndex + 1] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   if (
-  //     data[rowIndex - 1]?.[colIndex + 1] !== undefined &&
-  //     data[rowIndex - 1][colIndex + 1] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  //   if (
-  //     data[rowIndex + 1]?.[colIndex - 1] !== undefined &&
-  //     data[rowIndex + 1][colIndex - 1] === CODE.MINE
-  //   ) {
-  //     count += 1;
-  //   }
-  // 위의 코드는 내가 작성한 코드다. if 문을 사용하지 않고 코드를 다시 작성해봤다.
-  data[rowIndex][colIndex - 1] !== undefined &&
-    data[rowIndex][colIndex - 1] === CODE.MINE &&
-    ++count;
-  data[rowIndex]?.[colIndex + 1] !== undefined &&
-    data[rowIndex][colIndex + 1] === CODE.MINE &&
-    ++count;
-  data[rowIndex - 1]?.[colIndex] !== undefined &&
-    data[rowIndex - 1][colIndex] === CODE.MINE &&
-    ++count;
-  data[rowIndex + 1]?.[colIndex] !== undefined &&
-    data[rowIndex + 1][colIndex] === CODE.MINE &&
-    ++count;
-  data[rowIndex - 1]?.[colIndex - 1] !== undefined &&
-    data[rowIndex - 1][colIndex - 1] === CODE.MINE &&
-    ++count;
-  data[rowIndex + 1]?.[colIndex + 1] !== undefined &&
-    data[rowIndex + 1][colIndex + 1] === CODE.MINE &&
-    ++count;
-  data[rowIndex - 1]?.[colIndex + 1] !== undefined &&
-    data[rowIndex - 1][colIndex + 1] === CODE.MINE &&
-    ++count;
-  data[rowIndex + 1]?.[colIndex - 1] !== undefined &&
-    data[rowIndex + 1][colIndex - 1] === CODE.MINE &&
-    ++count;
+  // 논리 연산자를 사용해 아래와 같이 if 문을 생략 할 수 있습니다.
+  // 2 3 4
+  // 1 클릭 6
+  // 9 8 7
+  mineGroup.includes(data[rowIndex][colIndex - 1]) && ++count; // 1
+  mineGroup.includes(data[rowIndex - 1]?.[colIndex - 1]) && ++count; // 2
+  mineGroup.includes(data[rowIndex - 1]?.[colIndex]) && ++count; // 3
+  mineGroup.includes(data[rowIndex - 1]?.[colIndex + 1]) && ++count; // 4
+  mineGroup.includes(data[rowIndex][colIndex + 1]) && ++count; // 5
+  mineGroup.includes(data[rowIndex + 1]?.[colIndex + 1]) && ++count; // 6
+  mineGroup.includes(data[rowIndex + 1]?.[colIndex]) && ++count; // 7
+  mineGroup.includes(data[rowIndex + 1]?.[colIndex - 1]) && ++count; // 8
 
   return count;
 }
@@ -140,10 +86,51 @@ function tagFindIndex(event) {
   return i;
 }
 
-// 위의 함수의 기능을 제로초님은
+// tagFinfIndex 함수의 기능을 제로초님은
 // const rowIndex = event.target.paretNode.rowIndex;
 // const cellIndex = event.target.cellIndex;
 // 코드로 해결 하셨다... 역시 모르면 몸이 고생한다.
+
+function open(rowIndex, colIndex) {
+  if (data[rowIndex]?.[colIndex] >= 0) return;
+  const target = $tbody.children[rowIndex]?.children[colIndex];
+  if (!target) {
+    return;
+  }
+  const countM = countMine(rowIndex, colIndex);
+  target.textContent = countM || '';
+  // 0 을 표현하고 싶다면 ?? 사용, null, undefined 일때만
+  openCount += 1;
+  console.log(openCount);
+  data[rowIndex][colIndex] = countM;
+  target.className = 'opened';
+  if (openCount === row * cell - mine) {
+    const time = (new Date() - startTime) / 1000;
+    $tbody.removeEventListener('click', clickLeftBlock);
+    $tbody.removeEventListener('contextmenu', clickRightBlock);
+    clearInterval(interval);
+    setTimeout(() => {
+      alert(`게임 승리! 총 걸린 시간은 ${time} 초 입니다.`);
+    }, 0);
+  }
+  return countM;
+}
+function openAround(rI, cI) {
+  setTimeout(() => {
+    const count = open(rI, cI);
+    if (count === 0) {
+      // 클릭한 칸이 0 이라먄
+      openAround(rI, cI - 1);
+      openAround(rI - 1, cI - 1);
+      openAround(rI - 1, cI);
+      openAround(rI - 1, cI + 1);
+      openAround(rI, cI + 1);
+      openAround(rI + 1, cI + 1);
+      openAround(rI + 1, cI);
+      openAround(rI + 1, cI - 1);
+    }
+  }, 0);
+}
 const clickLeftBlock = function (event) {
   // 블럭을 클릭하면 발생하는 함수
   const index = tagFindIndex(event);
@@ -161,16 +148,14 @@ const clickLeftBlock = function (event) {
     return;
   } else if (data[rowIndex][colIndex] == CODE.NORMAL) {
     // 칸이 아무것도 없는 닫힌 칸이라면
-    const countM = countMine(rowIndex, colIndex);
-    event.target.textContent = countM;
-    data[rowIndex][colIndex] = CODE.OPENED;
-    event.target.className = 'opened';
+    openAround(rowIndex, colIndex);
   } else if (data[rowIndex][colIndex] == CODE.MINE) {
     // 지뢰일때
+    event.target.className = 'opened';
+    $tbody.removeEventListener('click', clickLeftBlock);
+    $tbody.removeEventListener('contextmenu', clickRightBlock);
     alert('지뢰!!');
-  } else if (data[rowIndex][colIndex] == CODE.OPENED) {
-    // 이미 열린 칸
-    alert('다시 클릭하지마렴');
+    clearInterval(interval);
   }
 };
 
@@ -227,8 +212,19 @@ function drawTable() {
     $tbody.addEventListener('contextmenu', clickRightBlock); // tbody 태그에 이벤트 리스너 달기 , 이벤트 버블링 이용하기
   });
 }
+let tdAll;
+const onSubmit = function (event) {
+  event.preventDefault();
+  // 행 입력받기
+  row = Number(event.target.row.value);
+  // 열 입력받기
+  cell = Number(event.target.col.value);
+  // 지뢰 개수 입력받기
+  mine = Number(event.target.mine.value);
+  openCount = 0;
 
-drawTable();
+  drawTable();
+  tdAll = document.querySelectorAll('td');
+};
 
-const tdAll = document.querySelectorAll('td');
-console.log(tdAll);
+$submit.addEventListener('submit', onSubmit);
