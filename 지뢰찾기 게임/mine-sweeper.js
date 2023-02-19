@@ -6,11 +6,10 @@ let row; // 줄
 let cell; // 칸
 let mine; // 지뢰 개수
 let openCount;
-let startTime = new Date();
-const interval = setInterval(() => {
-  const time = Math.floor((new Date() - startTime) / 1000);
-  $timer.textContent = `${time} 초`;
-}, 1000);
+let startTime;
+let interval;
+const dev = true; // 개발모드 설정 true 이면 개발 모드
+
 const CODE = {
   NORMAL: -1, // 닫힌 칸 (지뢰 없음)
   QUESTION: -2, // 물음표 칸 (지뢰 없음)
@@ -47,8 +46,8 @@ function plantMine() {
   console.log(data);
 
   for (let i = 0; i < randomMine.length; ++i) {
-    let rows = Math.floor(randomMine[i] / 10);
-    let cols = randomMine[i] % 10;
+    let rows = Math.floor(randomMine[i] / cell);
+    let cols = randomMine[i] % cell;
     data[rows][cols] = CODE.MINE;
   }
 }
@@ -101,7 +100,6 @@ function open(rowIndex, colIndex) {
   target.textContent = countM || '';
   // 0 을 표현하고 싶다면 ?? 사용, null, undefined 일때만
   openCount += 1;
-  console.log(openCount);
   data[rowIndex][colIndex] = countM;
   target.className = 'opened';
   if (openCount === row * cell - mine) {
@@ -161,35 +159,41 @@ const clickLeftBlock = function (event) {
 
 const clickRightBlock = function (event) {
   // 오른쪽 클릭 이벤트
-  event.preventDefault();
+  event.preventDefault(); // 브라우저 메뉴를 띄우는 것을 막기 위해 preventDefalult 메서드 호출
   const index = tagFindIndex(event);
   const rowIndex = Math.floor(index / 10);
   const colIndex = index % 10;
   let target = event.target;
   if (data[rowIndex][colIndex] == CODE.NORMAL) {
-    data[rowIndex][colIndex] = CODE.QUESTION;
-    target.className = 'question';
-    target.textContent = '?';
+    // 클릭한 칸의 데이터가 지뢰 없고 닫힌 칸이면
+    data[rowIndex][colIndex] = CODE.QUESTION; // 지뢰없는 물음표 칸으로 데이터 변경
+    target.className = 'question'; // 칸의 색을 변경해줘야하기 떄문에 클래스 변경
+    target.textContent = '?'; // 화면에서도 칸의 내용을 물음표로 변경
   } else if (data[rowIndex][colIndex] === CODE.QUESTION) {
-    data[rowIndex][colIndex] = CODE.FLAG;
-    target.className = 'flag';
-    target.textContent = '!';
+    // 클릭한 칸의 데이터가 지뢰없고 물음표 칸이면
+    data[rowIndex][colIndex] = CODE.FLAG; // 데이터를 지뢰없는 깃발 칸으로 데이터 변경
+    target.className = 'flag'; // 칸의 색을 변경해줘야하기 때문에 클래스 변경
+    target.textContent = '!'; // 화면에서도 칸의 내용을 깃발로 변경
   } else if (data[rowIndex][colIndex] === CODE.FLAG) {
-    data[rowIndex][colIndex] = CODE.NORMAL;
-    target.className = '';
-    target.textContent = '';
+    // 클릭한 칸의 데이터가 지뢰없고 깃발 칸이면
+    data[rowIndex][colIndex] = CODE.NORMAL; // 데이터를 지뢰없고 닫힌 칸으로 데이터 변경
+    target.className = ''; // 칸의 색을 변경해줘야하기 떄문에 클래스 변경, 닫힌 칸으로 색을 변경하기 위해 클래스 지우기
+    target.textContent = ''; // 화면에서도 칸의 내용을 지뢰없는 닫힌 칸으로 변경
   } else if (data[rowIndex][colIndex] === CODE.MINE) {
-    data[rowIndex][colIndex] = CODE.QUESTION_MINE;
-    target.className = 'question';
-    target.textContent = '?';
+    // 클릭한 칸의 데이터가 지뢰 있는 닫힌 칸이면
+    data[rowIndex][colIndex] = CODE.QUESTION_MINE; // 지뢰 있는 물음표 칸으로 데이터 변경
+    target.className = 'question'; // 칸의 색을 변경해줘야하기 때문에 클래스 변경
+    target.textContent = '?'; // 화면에서도 칸의 내용을 물음표로 변경
   } else if (data[rowIndex][colIndex] === CODE.QUESTION_MINE) {
-    data[rowIndex][colIndex] = CODE.FLAG_MINE;
-    target.className = 'flag';
-    target.textContent = '!';
+    // 클릭한 칸의 데이터가 지뢰 있고 물음표 칸이면
+    data[rowIndex][colIndex] = CODE.FLAG_MINE; // 데이터를 지뢰 있는 깃발 칸으로 변경
+    target.className = 'flag'; // 칸의 색을 변경해줘야하기 때문에 클래스 변경
+    target.textContent = '!'; // 화면에서도 칸의 내용을 깃발로 변경
   } else if (data[rowIndex][colIndex] === CODE.FLAG_MINE) {
-    data[rowIndex][colIndex] = CODE.MINE;
-    target.className = '';
-    target.textContent = '*';
+    // 클릭한 칸의 데이터가 지뢰 있고 깃발 칸이면
+    data[rowIndex][colIndex] = CODE.MINE; // 지뢰 있는 닫힌 칸으로 변경
+    target.className = ''; // 칸의 색을 변경해줘야하기 떄문에 클래스 변경, 닫힌 칸으로 색을 변경하기 위해 클래스 지우기
+    target.textContent = dev ? '*' : ''; // 화면에서도 칸의 내용을 지뢰 있는 닫힌 칸으로 변경
   }
 };
 
@@ -203,7 +207,7 @@ function drawTable() {
       // tr 태그에 자식태그로 td 태그 생성 후 cell 의 개수만큼 추가하기
       const cell = document.createElement('td');
       if (colElement === CODE.MINE) {
-        cell.textContent = '*';
+        cell.textContent = dev ? '*' : '';
       }
       row.appendChild(cell);
     });
@@ -214,16 +218,22 @@ function drawTable() {
 }
 let tdAll;
 const onSubmit = function (event) {
-  event.preventDefault();
+  event.preventDefault(); // 안하면 페이지 새로고침됨
   // 행 입력받기
   row = Number(event.target.row.value);
   // 열 입력받기
-  cell = Number(event.target.col.value);
+  cell = parseInt(event.target.col.value);
   // 지뢰 개수 입력받기
   mine = Number(event.target.mine.value);
   openCount = 0;
-
+  $tbody.innerHTML = '';
   drawTable();
+  // 행,열,지뢰개수 선택 후 화면에 테이블을 그린 후 시간 카운트 시작
+  startTime = new Date();
+  interval = setInterval(() => {
+    const time = Math.floor((new Date() - startTime) / 1000);
+    $timer.textContent = `${time} 초`;
+  }, 1000);
   tdAll = document.querySelectorAll('td');
 };
 
