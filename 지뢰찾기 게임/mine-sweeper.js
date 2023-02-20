@@ -8,7 +8,7 @@ let mine; // 지뢰 개수
 let openCount;
 let startTime;
 let interval;
-const dev = true; // 개발모드 설정 true 이면 개발 모드
+const dev = false; // 개발모드 설정 true 이면 개발 모드
 
 const CODE = {
   NORMAL: -1, // 닫힌 칸 (지뢰 없음)
@@ -23,29 +23,29 @@ const CODE = {
 let data;
 
 function plantMine() {
-  // 지뢰 랜덤으로 심기
+  // 지뢰 랜덤으로 심기, 칸의 정보가 담긴 data 배열 생성하기
   let arr = Array(row * cell)
     .fill()
     .map((element, index) => index);
 
-  let randomMine = [];
+  let randomMine = []; // 랜덤으로 0~99 까지의 숫자중 mine 개수 만큼 꺼내서 저장
   while (arr.length > row * cell - mine) {
     const randomIndex = arr.splice(Math.floor(Math.random() * arr.length), 1);
     randomMine.push(randomIndex);
   }
-  console.log(randomMine);
   data = [];
 
   for (let i = 0; i < row; ++i) {
+    // data 배열 생성
     const rowData = [];
     for (let j = 0; j < cell; ++j) {
       rowData.push(CODE.NORMAL);
     }
     data.push(rowData);
   }
-  console.log(data);
 
   for (let i = 0; i < randomMine.length; ++i) {
+    // data 배열에 지뢰 정보 저장
     let rows = Math.floor(randomMine[i] / cell);
     let cols = randomMine[i] % cell;
     data[rows][cols] = CODE.MINE;
@@ -76,10 +76,11 @@ function countMine(rowIndex, colIndex) {
 
 function tagFindIndex(event) {
   // 클릭한 블럭의 위치 인덱스를 찾아주는 함수, 데이터도 바꿔줘야 하기때문에 인덱스를 찾아야함
-  let i;
+  let i; // 인덱스 저장할 변수 선언
   tdAll.forEach((element, index) => {
     if (element == event.target) {
-      i = index;
+      // 모든 td 태그에서 이벤트가 발생한 td 태그와 같은 태그가 있다면
+      i = index; // 그 태그의 인덱스를 저장
     }
   });
   return i;
@@ -91,22 +92,25 @@ function tagFindIndex(event) {
 // 코드로 해결 하셨다... 역시 모르면 몸이 고생한다.
 
 function open(rowIndex, colIndex) {
-  if (data[rowIndex]?.[colIndex] >= 0) return;
+  // 칸을 여는 함수
+  if (data[rowIndex]?.[colIndex] >= 0) return; // 이미 연 곳을 또 다시 열면 수 많은 연산을 해야 한다. 그것을 방지하기 위해 이미 칸을 연 곳은 함수를 다시 열지 않고 종료
   const target = $tbody.children[rowIndex]?.children[colIndex];
   if (!target) {
+    // 범위를 벗어나서 undefined 가 나온다면 함수 종료
     return;
   }
-  const countM = countMine(rowIndex, colIndex);
-  target.textContent = countM || '';
+  const countM = countMine(rowIndex, colIndex); // 현재 오픈을 진행하고 있는 칸의 주변 8 칸 중에 지뢰의 개수 세는 함수 호출
+  target.textContent = countM || ''; // 지뢰의 개수가 0 이라면
   // 0 을 표현하고 싶다면 ?? 사용, null, undefined 일때만
-  openCount += 1;
-  data[rowIndex][colIndex] = countM;
-  target.className = 'opened';
+  openCount += 1; // 오픈한 칸의 개수 +1
+  data[rowIndex][colIndex] = countM; // 오픈한 지뢰의 개수 data 배열에 기록
+  target.className = 'opened'; // 오픈한 칸의 클래스 opened 로 변경
   if (openCount === row * cell - mine) {
-    const time = (new Date() - startTime) / 1000;
+    // 오픈한 칸의 개수와 총 칸에서 지뢰 칸의 개수를 뺀 개수가 같다면
+    const time = (new Date() - startTime) / 1000; // 모든 칸을 오픈할때까지의 소요 시간 계산하기
     $tbody.removeEventListener('click', clickLeftBlock);
     $tbody.removeEventListener('contextmenu', clickRightBlock);
-    clearInterval(interval);
+    clearInterval(interval); // 시간 화면에서 멈추기
     setTimeout(() => {
       alert(`게임 승리! 총 걸린 시간은 ${time} 초 입니다.`);
     }, 0);
@@ -114,11 +118,13 @@ function open(rowIndex, colIndex) {
   return countM;
 }
 function openAround(rI, cI) {
+  // 클릭한 칸을 열었을때 주변에 지뢰가 없어서 0 이면 주변 8칸도 모두 열기 위한 함수
   setTimeout(() => {
-    const count = open(rI, cI);
+    // 한번에 너무 많은 연산을 막기 위해서 비동기 함수인 setTimeout 메서드 사용
+    const count = open(rI, cI); // open 함수 호출
     if (count === 0) {
-      // 클릭한 칸이 0 이라먄
-      openAround(rI, cI - 1);
+      // 클릭한 칸이 0 이라면
+      openAround(rI, cI - 1); // openAround 함수에 인자로 넘어온 r1,c1 값의 주변 8 칸을 모두 재귀 함수로 찾기
       openAround(rI - 1, cI - 1);
       openAround(rI - 1, cI);
       openAround(rI - 1, cI + 1);
@@ -216,8 +222,9 @@ function drawTable() {
     $tbody.addEventListener('contextmenu', clickRightBlock); // tbody 태그에 이벤트 리스너 달기 , 이벤트 버블링 이용하기
   });
 }
-let tdAll;
+let tdAll; // 모든 td 태그를 선택해 저장할 변수
 const onSubmit = function (event) {
+  // 게임 생성 버튼을 클릭하면 호출되는 콜백 함수
   event.preventDefault(); // 안하면 페이지 새로고침됨
   // 행 입력받기
   row = Number(event.target.row.value);
@@ -225,16 +232,17 @@ const onSubmit = function (event) {
   cell = parseInt(event.target.col.value);
   // 지뢰 개수 입력받기
   mine = Number(event.target.mine.value);
-  openCount = 0;
-  $tbody.innerHTML = '';
+  openCount = 0; // 오픈한 칸을 기록하는 변수의 값 초기화
+  $tbody.innerHTML = ''; // tbody 의 자식 태그 모두 제거
   drawTable();
   // 행,열,지뢰개수 선택 후 화면에 테이블을 그린 후 시간 카운트 시작
-  startTime = new Date();
+  startTime = new Date(); // 시작 시간 기록
   interval = setInterval(() => {
+    // 화면에 1초 간격으로 시간이 흐르고 있는 것을 보여주기
     const time = Math.floor((new Date() - startTime) / 1000);
     $timer.textContent = `${time} 초`;
   }, 1000);
-  tdAll = document.querySelectorAll('td');
+  tdAll = document.querySelectorAll('td'); // 모든 td 태그 선택
 };
 
 $submit.addEventListener('submit', onSubmit);
