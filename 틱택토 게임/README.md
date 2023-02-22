@@ -85,7 +85,7 @@ let drawCount = data.flat().every((element)=>element.textContent) 코드를 이�
 ## 게임 종료
 
 <p>게임이 종료되면 게임 다시 시작하기 버튼을 클릭하기 전까지는 대기 상태가 되어야 합니다. 그래서 게임 결과가 화면에 보여준 이후에 td 태그를 클릭하게 되면 이벤트가 발생해서 clickBlock 콜백 함수가 호출되지만 코드 가장 위에 if 문으로 화면에 게임 결과가 있다면 함수가 return 으로 종료되도록 코드를 작성하였습니다. 게임 다시 시작하기 버튼을 클릭해 clickReset 콜백 함수가 호출되어야 화면에서 게임 결과가 지워 집니다.</p>
-<img src = "./tictaetoe-code8.png">
+<img src = "./tictactoe-code8.png">
 <p>위의 코드처럼 이미 게임 결과가 화면에 보여졌거나 빈칸에 그림이 그려져 있는 상태면 클릭해도 clickBlock 함수가 종료된다.</p>
 <hr>
 
